@@ -6,9 +6,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by LaunchCode
@@ -87,29 +87,26 @@ public class JobData {
      * Search all columns for the given term
      *
      * @param value The search term to look for
-     * @return      List of all jobs with at least one field containing the value
+     * @return List of all jobs with at least one field containing the value
      */
     public static ArrayList<HashMap<String, String>> findByValue(String value) {
+        ArrayList<HashMap<String, String>> matchingJobs = new ArrayList<>();
 
-        // load data, if not already loaded
-        loadData();
+        // Convert the search term to lowercase
+        String lowercaseValue = value.toLowerCase();
 
-        ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
-
-        String searchTerm = value.toLowerCase();
-
-        for (HashMap<String, String> row : allJobs){
-            for (String key : row.keySet()) {
-                String columbValue = row.get(key).toLowerCase();
-                if (columbValue.contains(searchTerm)) {
-                    jobs.add(row);
-                    break;
+        for (HashMap<String, String> job : allJobs) {
+            for (Map.Entry<String, String> field : job.entrySet()) {
+                // Convert field values to lowercase for case-insensitive comparison
+                String lowercaseFieldValue = field.getValue().toLowerCase();
+                if (lowercaseFieldValue.contains(lowercaseValue)) {
+                    matchingJobs.add(job);
+                    break;  // Exit the inner loop once a match is found
                 }
             }
         }
 
-        // TODO - implement this method
-        return jobs;
+        return matchingJobs;
     }
 
     /**
