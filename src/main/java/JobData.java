@@ -65,17 +65,18 @@ public class JobData {
      * @return List of all jobs matching the criteria
      */
     public static ArrayList<HashMap<String, String>> findByColumnAndValue(String column, String value) {
-
-        // load data, if not already loaded
         loadData();
 
         ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
 
-        for (HashMap<String, String> row : allJobs) {
+        String lowercaseValue = value.toLowerCase();
 
+        for (HashMap<String, String> row : allJobs) {
             String aValue = row.get(column);
 
-            if (aValue.contains(value)) {
+            String lowercaseAValue = aValue.toLowerCase();
+
+            if (lowercaseAValue.contains(lowercaseValue)) {
                 jobs.add(row);
             }
         }
@@ -89,32 +90,29 @@ public class JobData {
      * @param value The search term to look for
      * @return List of all jobs with at least one field containing the value
      */
-    public static ArrayList<HashMap<String, String>> findByValue(String value) {
+        public static ArrayList<HashMap<String, String>> findByValue(String value) {
+            loadData();
 
-        loadData();
+            ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
 
-        ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
+            String lowercaseValue = value.toLowerCase();
 
-        // Convert the search term to lowercase
+            for (HashMap<String, String> job : allJobs) {
+                for (String key : job.keySet()) {
+                    String aValue = job.get(key);
 
-        for (HashMap<String, String> row : allJobs) {
+                    String lowercaseAValue = aValue.toLowerCase();
 
-            for (String key : row.keySet()) {
-                String aValue = row.get(key);
-
-                if (aValue.toLowerCase().contains(value.toLowerCase())) {
-                    jobs.add(row);
-
-                    break;
+                    if (lowercaseAValue.contains(lowercaseValue)) {
+                        jobs.add(job);
+                        break;
+                    }
                 }
-                // Convert field values to lowercase for case-insensitive comparison
-
-                // Exit the inner loop once a match is found
             }
+
+            return jobs;
         }
 
-        return jobs;
-}
 
     /**
      * Read in data from a CSV file and store it in a list
